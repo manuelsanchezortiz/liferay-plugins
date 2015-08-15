@@ -53,9 +53,9 @@ MailManager mailManager = MailManager.getInstance(request);
 				</ul>
 			</aui:column>
 		</c:if>
-
+		<!-- Only internal mail 
 		<aui:column>
 			<aui:button onClick="Liferay.Mail.addAccount();" value="add-mail-account" />
-		</aui:column>
+		</aui:column> -->
 	</aui:layout>
 </c:if>

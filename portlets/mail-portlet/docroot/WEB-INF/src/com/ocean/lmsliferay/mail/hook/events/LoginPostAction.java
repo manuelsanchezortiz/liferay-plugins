@@ -26,10 +26,12 @@ import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
+import com.liferay.portal.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.ocean.lmsliferay.mail.util.AccountTool;
 import com.ocean.lmsliferay.mail.util.CustomFields;
@@ -84,7 +86,13 @@ public class LoginPostAction extends com.liferay.mail.hook.events.LoginPostActio
 		List<Group> sites= user.getMySites(); 
 		
 		for( Group site: sites ){
+			
 			String domain= (String)site.getExpandoBridge().getAttribute(CustomFields.Group.LMS_MAIL_DOMAIN);
+			
+			if( StringUtils.isEmpty(domain) && site.isOrganization() ){
+				Organization org= OrganizationLocalServiceUtil.getOrganization( site.getOrganizationId() );
+				domain= (String)org.getExpandoBridge().getAttribute(CustomFields.Group.LMS_MAIL_DOMAIN);
+			}
 			
 			if( !StringUtils.isEmpty(domain) ){
 				String accountName= user.getScreenName() + "@" + domain.toLowerCase().trim();
