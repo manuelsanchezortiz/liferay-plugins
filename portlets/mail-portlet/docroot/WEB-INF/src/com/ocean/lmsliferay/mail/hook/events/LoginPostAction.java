@@ -39,6 +39,8 @@ import com.ocean.lmsliferay.mail.util.LmsMailLog;
 import com.ocean.lmsliferay.mail.util.LmsPortletPropsValues;
 
 /**
+ * Setups user account (mail)
+ * 
  * @author Manuel Sanchez
  */
 public class LoginPostAction extends com.liferay.mail.hook.events.LoginPostAction {
@@ -58,7 +60,10 @@ public class LoginPostAction extends com.liferay.mail.hook.events.LoginPostActio
 			}
 		}
 		catch (Exception e) {
-			throw new ActionException(e);
+			//do not throw or the chain of hooks stop
+			e.printStackTrace();
+			_log.error(e);
+
 		}
 		
 		super.run(request, response);
@@ -98,16 +103,13 @@ public class LoginPostAction extends com.liferay.mail.hook.events.LoginPostActio
 				String accountName= user.getScreenName() + "@" + domain.toLowerCase().trim();
 				
 				if( !AccountTool.isPresentAccount(request, accountName)){
-					_log.info("Will create user account:" + accountName );
+					_log.info("Will create user account:" + accountName + " for site: " + site.getName() + " which may be an organization");
 					
 					AccountTool.setupAccount(request, user, site, accountName, domain );
 				}				
 			}else{
-				_log.info("No domain for Lms site: " + site.getName() + ". Unable to auto-create mail account" );
+				_log.info("No domain for Lms site: " + site.getName() + ". Unable to auto-create mail account. Mail are created at org. level so this message has not to be bad!" );
 			}
 		}
 	}
-	
-
-
 }
